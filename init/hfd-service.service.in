@@ -1,5 +1,6 @@
 [Unit]
 Description=HFD system service
+Documentation=https://gitlab.com/ubports/core/hfd-service/
 
 [Service]
 ExecStart=@pkglibexecdir@/hfd-service
