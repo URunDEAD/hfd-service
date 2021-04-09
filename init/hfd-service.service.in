@@ -1,0 +1,9 @@
+[Unit]
+Description=HFD system service
+
+[Service]
+ExecStart=@pkglibexecdir@/hfd-service
+Restart=on-failure
+
+[Install]
+WantedBy=default.target

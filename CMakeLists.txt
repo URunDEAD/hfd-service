@@ -33,6 +33,7 @@ SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
 add_subdirectory(src)
 add_subdirectory(tools)
 add_subdirectory(qt)
+add_subdirectory(init)
 
 # Dbus policy
 install(FILES data/com.lomiri.hfd.conf
