@@ -14,7 +14,7 @@ Build-Depends: cmake (>= 2.8.10),
                qtdeclarative5-dev
 Maintainer: Marius Gripsgard <marius@ubports.com>
 Standards-Version: 3.9.5
-Homepage: https://github.com/ubports/deviceinfo
+Homepage: https://gitlab.com/ubports/core/hfd-service/
 
 Package: hfd-service
 Section: libs
