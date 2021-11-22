@@ -25,6 +25,21 @@ else()
   message(STATUS "Bulding without libhybris support")
 endif()
 
+option(ENABLE_LIBGBINDER "Enable libgbinder support" ON)
+
+if (ENABLE_LIBGBINDER)
+  pkg_check_modules(GLIB_UTIL libglibutil)
+  pkg_check_modules(GBINDER libgbinder)
+  if(GLIB_UTIL_FOUND AND GBINDER_FOUND)
+    message(STATUS "Bulding with libgbinder support")
+    set(HAVE_LIBGBINDER true)
+  else()
+    message(WARNING "Bulding without libgbinder support, missing required dependencies!")
+  endif()
+else()
+  message(STATUS "Bulding without libgbinder support")
+endif()
+
 find_package(Qt5Core REQUIRED)
 find_package(Qt5DBus REQUIRED)
 
@@ -43,3 +58,10 @@ install(FILES data/hfd-service.conf
 install(FILES data/com.lomiri.hfd.conf
   DESTINATION ${CMAKE_INSTALL_FULL_SYSCONFDIR}/dbus-1/system.d
 )
+
+# Dbus service file
+configure_file(data/com.lomiri.hfd.service.in com.lomiri.hfd.service)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/com.lomiri.hfd.service
+  DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/dbus-1/system-services
+)
+
