@@ -57,12 +57,12 @@ public Q_SLOTS:
     void setState(int state) override { m_leds->setState(hfd::utils::toState(state)); };
     void setColor(unsigned int color) override { m_leds->setColor(color); }
     void setOnMs(int ms) override {
-        if (!verifyDBusInt("ms", ms))
+        if (!verifyDBusInt("onMs", ms))
             return;
         m_leds->setOnMs(ms);
     };
     void setOffMs(int ms) override {
-        if (!verifyDBusInt("ms", ms))
+        if (!verifyDBusInt("offMs", ms, 0))
             return;
         m_leds->setOffMs(ms);
     };
