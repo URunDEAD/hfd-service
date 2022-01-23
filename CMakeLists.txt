@@ -48,11 +48,7 @@ SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
 add_subdirectory(src)
 add_subdirectory(tools)
 add_subdirectory(qt)
-
-# Dbus file
-install(FILES data/hfd-service.conf 
-  DESTINATION ${CMAKE_INSTALL_FULL_SYSCONFDIR}/init
-)
+add_subdirectory(init)
 
 # Dbus policy
 install(FILES data/com.lomiri.hfd.conf

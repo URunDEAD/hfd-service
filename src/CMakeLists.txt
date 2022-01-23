@@ -74,4 +74,4 @@ target_link_libraries(hfd-service
     Qt5::DBus
 )
 
-install(TARGETS hfd-service RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+install(TARGETS hfd-service RUNTIME DESTINATION ${CMAKE_INSTALL_LIBEXECDIR})

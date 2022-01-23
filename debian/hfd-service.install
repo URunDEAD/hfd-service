@@ -1,4 +1,4 @@
-usr/bin/hfd-service
-etc/init/hfd-service.conf
+usr/libexec/hfd-service
+lib/systemd/system/hfd-service.service
 etc/dbus-1/system.d/com.lomiri.hfd.conf
 usr/share/dbus-1/system-services/com.lomiri.hfd.service
