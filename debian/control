@@ -14,7 +14,8 @@ Build-Depends: cmake (>= 2.8.10),
                qtbase5-dev,
                qtfeedback5-dev,
                cmake-extras,
-               qtdeclarative5-dev
+               qtdeclarative5-dev,
+               systemd [linux-any],
 Maintainer: Marius Gripsgard <marius@ubports.com>
 Standards-Version: 3.9.5
 Homepage: https://gitlab.com/ubports/core/hfd-service/
