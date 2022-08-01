@@ -13,7 +13,6 @@ if (${SYSTEMD_FOUND})
     set (SYSTEMD_SYSTEM_FILE_IN "${CMAKE_CURRENT_SOURCE_DIR}/${SYSTEMD_SYSTEM_NAME}.in")
 
     # build it
-    set (pkglibexecdir "${CMAKE_INSTALL_FULL_LIBEXECDIR}")
     configure_file ("${SYSTEMD_SYSTEM_FILE_IN}" "${SYSTEMD_SYSTEM_FILE}")
 
     # install it
