@@ -2,3 +2,4 @@
 Name=com.lomiri.hfd
 Exec=@CMAKE_INSTALL_FULL_LIBEXECDIR@/hfd-service
 User=root
+SystemdService=hfd-service.service

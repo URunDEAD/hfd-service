@@ -3,6 +3,8 @@ Description=HFD system service
 Documentation=https://gitlab.com/ubports/core/hfd-service/
 
 [Service]
+Type=dbus
+BusName=com.lomiri.hfd
 ExecStart=@CMAKE_INSTALL_FULL_LIBEXECDIR@/hfd-service
 Restart=on-failure
 
