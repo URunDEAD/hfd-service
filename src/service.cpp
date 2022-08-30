@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 UBports foundation
+ * Copyright 2020-2022 UBports foundation
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -23,6 +23,8 @@
 
 #include "hfdadaptor.h"
 
+#include <deviceinfo.h>
+
 #include <climits>
 #include <memory>
 #include <iostream>
@@ -39,19 +41,24 @@ public:
         , m_leds(leds)
     {}
 
+    void setVibrateDurationExtraMs(uint vibrateDurationExtraMs) {
+        std::cout << "Setting vibrateDurationExtraMs as " << vibrateDurationExtraMs << std::endl;
+        m_vibrateDurationExtraMs = vibrateDurationExtraMs;
+    };
+
 public Q_SLOTS:
     void vibrate() override { m_vibrator->vibrate(); };
     void vibrate(int durationMs) override {
         if (!verifyDBusInt("durationMs", durationMs, 1, 1000 * 60))
             return;
-        m_vibrator->vibrate(durationMs);
+        m_vibrator->vibrate(durationMs + m_vibrateDurationExtraMs);
     };
     void rumble(int durationMs, int repeat) override {
         if (!verifyDBusInt("durationMs", durationMs, 1, 1000))
             return;
         if (!verifyDBusInt("repeat", repeat, 1, 60))
             return;
-        m_vibrator->rumble(durationMs, repeat);
+        m_vibrator->rumble(durationMs + m_vibrateDurationExtraMs, repeat);
     };
 
     void setState(int state) override { m_leds->setState(hfd::utils::toState(state)); };
@@ -80,6 +87,7 @@ protected:
 private:
     std::shared_ptr<hfd::Vibrator> m_vibrator;
     std::shared_ptr<hfd::Leds> m_leds;
+    uint m_vibrateDurationExtraMs;
 };
 
 #include "service.moc"
@@ -108,6 +116,8 @@ int main(int argc, char *argv[]) {
 
     std::cout << "done" << std::endl;
     auto dbusAdaptor = new DbusAdaptorService(vibrator, leds);
+    std::unique_ptr<DeviceInfo> devInfo = std::make_unique<DeviceInfo>();
+    dbusAdaptor->setVibrateDurationExtraMs(static_cast<unsigned int>(std::stoul(devInfo->get("VibrateDurationExtraMs", "0"))));
 
     new VibratorAdaptor(dbusAdaptor);
     new LedsAdaptor(dbusAdaptor);
