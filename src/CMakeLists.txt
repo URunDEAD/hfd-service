@@ -54,6 +54,10 @@ target_link_libraries(hfd-core
     ${LIBGBINDER_LIBRARIES}
 )
 
+include_directories(
+    ${DEVICEINFO_INCLUDE_DIRS}
+)
+
 set(SERVICE_SRC
     service.cpp
     dbusAdaptor.h
@@ -72,6 +76,7 @@ target_link_libraries(hfd-service
 
     Qt5::Core
     Qt5::DBus
+    ${DEVICEINFO_LDFLAGS}
 )
 
 install(TARGETS hfd-service RUNTIME DESTINATION ${CMAKE_INSTALL_LIBEXECDIR})

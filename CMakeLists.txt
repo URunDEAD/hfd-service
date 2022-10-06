@@ -9,6 +9,7 @@ include(FindPkgConfig)
 include(GNUInstallDirs)
 
 pkg_check_modules(UDEV REQUIRED libudev)
+pkg_check_modules(DEVICEINFO REQUIRED deviceinfo)
 
 option(ENABLE_LIBHYBRIS "Enable libhybris support" ON)
 
