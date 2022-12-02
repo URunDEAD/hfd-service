@@ -1,6 +1,6 @@
 # hfd-service
 
-**H**uman **f**eedback **d**evice **service** is a dbus activated service that manages human feedback devices sutch as leds and vibrators on mobile devices. 
+**H**uman **f**eedback **d**evice **service** is a dbus activated service that manages human feedback devices such as leds and vibrators on mobile devices. 
 
 
 This replaces usensord and unity8's own led/light handeler
