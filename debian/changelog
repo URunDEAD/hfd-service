@@ -1,3 +1,9 @@
+hfd-service (0.2.0) UNRELEASED; urgency=medium
+
+  * 
+
+ -- Guido Berhoerster <guido+ubports@berhoerster.name>  Mon, 30 Jan 2023 15:41:09 +0100
+
 hfd-service (0.1.0) xenial; urgency=medium
 
   * initial release

@@ -1,4 +1,7 @@
 #!/usr/bin/make -f
 
 %:
-	dh $@ --parallel --buildsystem cmake --fail-missing
+	dh $@ --buildsystem cmake
+
+override_dh_missing:
+	dh_missing --fail-missing
