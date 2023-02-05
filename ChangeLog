@@ -1,0 +1,221 @@
+2023-02-05 Mike Gabriel
+
+        * Release 0.2.0 (HEAD -> main, tag: 0.2.0)
+
+2023-01-30 Mike Gabriel
+
+        * Merge branch 'personal/gberh/dh-12' into 'main' (8f278d0)
+
+2023-01-30 Guido Berhoerster
+
+        * Update to dh version 12 (dcb9bc7)
+
+2022-12-02 Mike Gabriel
+
+        * Merge branch 'abuGit-main-patch-97528' into 'main' (7c7b264)
+
+2022-12-02 Andreas
+
+        * Spelling mistake: sutch --> such (cc391dd)
+
+2022-10-06 Mike Gabriel
+
+        * Merge branch 'focal-vibrate-scale' into 'main' (de06edd)
+
+2022-08-31 Jami Kettunen
+
+        * service: Add support for vibrate duration length extension
+          (1c36299)
+
+2022-08-01 Ratchanan Srirattanamet
+
+        * Merge branch 'fix-dbus-systemd-apparmor' into 'main' (dc3d89b)
+
+2022-08-01 Guido Berhoerster
+
+        * Allow DBus activation by AppArmor-confined apps (d128f51)
+        * Make hfd-service DBus-activatable (eee84ad)
+        * Correct path of the executable in the systemd unit file (85ae8d1)
+        * Correct path of the executable in the DBus service file (1c03fe3)
+
+2022-07-03 Mike Gabriel
+
+        * Merge branch 'mariogrip-main-patch-06981' into 'main' (f52d1b7)
+
+2022-07-03 Marius Gripsgard
+
+        * debian/control: Depend on systemd (e25fcd0)
+
+2022-01-23 Marius Gripsgard
+
+        * Merge branch 'mr/switch-to-systemd' into 'main' (23e9c69)
+
+2021-12-17 Florian Leeber
+
+        * Merge branch 'Flohack74-main-patch-59104' into 'main' (d230558)
+        * Allow 0 value for LEDs off milliseconds (620a2ee)
+
+2021-11-27 Marius Gripsgard
+
+        * Merge branch 'main' into 'main' (5c747fb)
+
+2021-11-22 Marius Gripsgard
+
+        * Merge branch 'xenial' into 'main' (5f920c6)
+
+2021-06-28 Matthias Gerstner
+
+        * vibrator-ff: check for valid file descriptor before writing
+          (d3eafe5)
+
+2021-06-25 Matthias Gerstner
+
+        * global: fix various compiler warnings (0186b78)
+        * vibrator-ff: zero-initialize features array, check for ioctl()
+          error (07246e9)
+        * DBusAdaptorService: check for bad integer values passed via D-Bus
+          (92954aa)
+        * vibrator-ff: open files with O_CLOEXEC (e2a8d08)
+        * vibrator-legacy: remove unused m_thread member (8b0566c)
+
+2021-10-06 Ratchanan Srirattanamet
+
+        * Move Jenkinsfile to debian/ per the new guideline (05ef6e0)
+        * Update Jenkinsfile to use shared library (873551d)
+
+2021-10-02 Erfan Abdi
+
+        * Proper android 8+ support (#21) (8d6e2e1)
+
+2021-09-08 Florian Leeber
+
+        * Add missing .service file (#20) (a05537e)
+
+2021-04-13 Marius Gripsgard
+
+        * Merge branch 'mr/debian-folder-copy-paste-flaw-fixes' into 'main'
+          (7bc710d)
+
+2021-04-09 Mike Gabriel
+
+        * Revert "data/com.lomiri.hfd.conf: Fix D-Bus policy without send
+          destination." (bfc78ee)
+        * init/hfd-service.service.in: Add Documentation= key (pointing to
+          upstream Git repo, i.e. its Readme.md). (4a4e1e6)
+        * data/com.lomiri.hfd.conf: Fix D-Bus policy without send
+          destination. (945e7b8)
+        * data/com.lomiri.hfd.conf: Fix D-Bus policy without send
+          destination. (ffc4e30)
+        * debian/hfd-service.install: Update for systemd switch-over and
+          moved service binary. (8048bc7)
+        * init/: Add systemd system service file. (b427598)
+        * src/CMakeLists.txt: Install hfd-service executable to LIBEXECDIR.
+          (ecc76ca)
+        * data/hfd-service.conf: Drop file. Drop upstart support. (e0aec42)
+        * debian/control: Upstream repo has been moved to gitlab.com.
+          (6c018d6)
+        * debian/copyright: Upstream repo has been moved to gitlab.com.
+          (ac4b7c9)
+        * debian/: Fix copy-paste flaws (wrong pkg name). (88afa6c)
+
+2021-03-16 Marius Gripsgard
+
+        * Merge pull request #16 from PureTryOut/sysconfdir (d7a36de) (tag:
+          0.1.0)
+        * Merge pull request #17 from PureTryOut/spelling-mistakes (34415cd)
+        * Merge pull request #15 from ubports/xenial_-_waitforlxc (00c850e)
+        * Merge pull request #14 from calebccff/vibrator-forcefeedback
+          (a564c9b)
+
+2021-03-03 Bart Ribbers
+
+        * Fix spelling mistakes when DBus connection fails (bc91acd)
+        * Fix install location of conf files (b37e724)
+
+2021-02-27 Alfred Neumayer
+
+        * upstart: Speed up waiting for lxc-android-config to be up (effca39)
+
+2021-01-28 Caleb Connolly
+
+        * vibrator: ff: add new Force Feedback vibrator (014aec3)
+
+2021-01-24 Marius Gripsgard
+
+        * Merge pull request #13 from ubports-oneplus6/oneplus6-fixes
+          (c7d0237)
+
+2021-01-21 Caleb Connolly
+
+        * vibrator-sysfs: more robust transient trigger support detection
+          (6bc0ace)
+
+2021-01-18 Caleb Connolly
+
+        * udevDevice: fix indent (96e56e2)
+        * vibrator-sysfs: Don't crash when failing to add transient trigger
+          (9c7c6dd)
+
+2020-08-30 Marius Gripsgard
+
+        * Merge remote-tracking branch 'origin/xenial_-_android9' into xenial
+          (896ef75)
+        * Merge branch 'xenial_-_hybrisopt' into xenial (1e15fb9)
+
+2020-04-23 Alfred Neumayer
+
+        * leds-hybris: Fix segfault when light device cannot be loaded
+          (4e85878)
+
+2020-04-16 Alfred Neumayer
+
+        * service: Add env vars to switch between backend implementations
+          (04681b9)
+
+2020-07-24 Marius Gripsgard
+
+        * Make libhybris optional (7378be4)
+        * Add missing include for newer gcc (89871d8)
+        * [cmake] Remove uneeded qt5_use_modules (f56ae91)
+
+2020-07-07 Ratchanan Srirattanamet
+
+        * leds: prioritise hybris backend (8bc7c0b)
+        * Wait for Android container to be up (01d7964)
+
+2020-06-27 Marius Gripsgard
+
+        * Merge pull request #3 from peat-psuwit/xenial_-_hfd-fix-fp2
+          (5ccbb0e)
+
+2020-06-17 Ratchanan Srirattanamet
+
+        * leds-hybris: don't check for light device at construction (335e294)
+        * leds-sysfs: don't use where it lacks timer trigger (2225a79)
+
+2020-05-28 Marius Gripsgard
+
+        * Merge pull request #2 from peat-psuwit/xenial_-_repeat-thread-cv
+          (bd52bb0)
+        * Merge pull request #1 from peat-psuwit/xenial_-_fix-rumble
+          (b8b4501)
+
+2020-05-27 Ratchanan Srirattanamet
+
+        * Make repeatThread uses mutex/cv (7c15716)
+        * [vibrator] capture duration by value (3ccc8d0)
+
+2020-04-23 Marius Gripsgard
+
+        * [leds-sysfs] Improve search for color leds (9469fb1)
+
+2020-04-13 Marius Gripsgard
+
+        * Move components to hfd namespace (c6b0a48)
+
+2020-03-21 Marius Gripsgard
+
+        * [qmlplugin] Make sure all values are up-to-date before setting
+          state on (bbaded1)
+        * [debian] Add missing deps (28d8900)
+        * Inital commit (4c70084)
