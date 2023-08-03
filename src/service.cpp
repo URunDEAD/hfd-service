@@ -16,9 +16,11 @@
  * Author: Marius Gripsgard <marius@ubports.com>
  */
 
+#include "credentialscache.h"
 #include "dbusAdaptor.h"
 #include "vibrator.h"
 #include "leds.h"
+#include "usersettings.h"
 #include "utils.h"
 
 #include "hfdadaptor.h"
@@ -26,16 +28,17 @@
 #include <deviceinfo.h>
 
 #include <climits>
+#include <functional>
 #include <memory>
 #include <iostream>
 
 #include <QCoreApplication>
 #include <QDBusError>
 
-class DbusAdaptorService : public DbusAdaptor, protected QDBusContext {
+class DbusAdaptorPrivilegedService : public DbusAdaptor, protected QDBusContext {
     Q_OBJECT
 public:
-    DbusAdaptorService(std::shared_ptr<hfd::Vibrator> vibrator, std::shared_ptr<hfd::Leds> leds)
+    DbusAdaptorPrivilegedService(std::shared_ptr<hfd::Vibrator> vibrator, std::shared_ptr<hfd::Leds> leds)
         : DbusAdaptor()
         , m_vibrator(vibrator)
         , m_leds(leds)
@@ -90,6 +93,132 @@ private:
     uint m_vibrateDurationExtraMs;
 };
 
+class DbusAdaptorService : public DbusAdaptor, protected QDBusContext {
+    Q_OBJECT
+public:
+    DbusAdaptorService(
+        std::shared_ptr<hfd::Vibrator> vibrator,
+        std::shared_ptr<hfd::Leds> leds,
+        QDBusConnection const& connection)
+        : DbusAdaptor()
+        , m_vibrator(vibrator)
+        , m_leds(leds)
+        , m_connection(connection)
+        , m_credcache(connection)
+        , m_usersettings(connection)
+    {}
+
+    void setVibrateDurationExtraMs(uint vibrateDurationExtraMs) {
+        std::cout << "Setting vibrateDurationExtraMs as " << vibrateDurationExtraMs << std::endl;
+        m_vibrateDurationExtraMs = vibrateDurationExtraMs;
+    };
+
+public Q_SLOTS:
+    void vibrate() override {
+        callIfVibrateAllowed([this] () {
+            m_vibrator->vibrate();
+        });
+    };
+    void vibrate(int durationMs) override {
+        if (!verifyDBusInt("durationMs", durationMs, 1, 1000 * 60))
+            return;
+
+        callIfVibrateAllowed([=] () {
+            m_vibrator->vibrate(durationMs + m_vibrateDurationExtraMs);
+        });
+    };
+    void rumble(int durationMs, int repeat) override {
+        if (!verifyDBusInt("durationMs", durationMs, 1, 1000))
+            return;
+        if (!verifyDBusInt("repeat", repeat, 1, 60))
+            return;
+        callIfVibrateAllowed([=] () {
+            m_vibrator->rumble(durationMs + m_vibrateDurationExtraMs, repeat);
+        });
+    };
+
+    // TODO: maybe disallow LEDs on the unprivileged object path.
+    void setState(int state) override { m_leds->setState(hfd::utils::toState(state)); };
+    void setColor(unsigned int color) override { m_leds->setColor(color); }
+    void setOnMs(int ms) override {
+        if (!verifyDBusInt("onMs", ms))
+            return;
+        m_leds->setOnMs(ms);
+    };
+    void setOffMs(int ms) override {
+        if (!verifyDBusInt("offMs", ms, 0))
+            return;
+        m_leds->setOffMs(ms);
+    };
+
+protected:
+    bool verifyDBusInt(const std::string &name, int val, int min = 1, int max = INT_MAX) {
+        if (val >= min && val <= max)
+            return true;
+
+        this->sendErrorReply(QDBusError::InvalidArgs, QString::fromStdString(std::string(name) + ": parameter out of range"));
+        return false;
+    }
+
+private:
+    void callIfVibrateAllowed(std::function<void(void)> callback)
+    {
+        using namespace std::placeholders;
+
+        auto msg = message();
+
+        setDelayedReply(true);
+
+        m_credcache.get(msg.service(),
+            std::bind(&DbusAdaptorService::onCredentialReceived,
+                this, callback, msg, _1));
+    }
+
+    void onCredentialReceived(
+        std::function<void(void)> callback,
+        QDBusMessage msg,
+        CredentialsCache::Credentials const& cred)
+    {
+        using namespace std::placeholders;
+
+        if (!cred.valid) {
+            // Fallback to previous behavior and allows vibration.
+            // TODO: is this a sane thing to do?
+            callback();
+            m_connection.send(msg.createReply());
+            return;
+        }
+
+        m_usersettings.getSettingsForUid(cred.user,
+            std::bind(&DbusAdaptorService::onUserSettingsReceived,
+                this, callback, msg, _1));
+    }
+
+    void onUserSettingsReceived(
+        std::function<void(void)> callback,
+        QDBusMessage msg,
+        bool allowed)
+    {
+        if (allowed) {
+            callback();
+            m_connection.send(msg.createReply());
+        } else {
+            m_connection.send(msg.createErrorReply(
+                QStringLiteral("org.freedesktop.DBus.Error.AccessDenied"),
+                QStringLiteral("User disallow general vibration")
+            ));
+        }
+    }
+
+    std::shared_ptr<hfd::Vibrator> m_vibrator;
+    std::shared_ptr<hfd::Leds> m_leds;
+    QDBusConnection m_connection;
+
+    CredentialsCache m_credcache;
+    UserSettings m_usersettings;
+    uint m_vibrateDurationExtraMs;
+};
+
 #include "service.moc"
 
 
@@ -115,14 +244,24 @@ int main(int argc, char *argv[]) {
         leds = hfd::Leds::create();
 
     std::cout << "done" << std::endl;
-    auto dbusAdaptor = new DbusAdaptorService(vibrator, leds);
+
+    QDBusConnection connection = QDBusConnection::systemBus();
+
+    auto dbusAdaptor = new DbusAdaptorService(vibrator, leds, connection);
     std::unique_ptr<DeviceInfo> devInfo = std::make_unique<DeviceInfo>();
     dbusAdaptor->setVibrateDurationExtraMs(static_cast<unsigned int>(std::stoul(devInfo->get("VibrateDurationExtraMs", "0"))));
 
     new VibratorAdaptor(dbusAdaptor);
     new LedsAdaptor(dbusAdaptor);
-    QDBusConnection connection = QDBusConnection::systemBus();
     connection.registerObject("/com/lomiri/hfd", dbusAdaptor);
+
+    auto dbusAdaptorPrivileged = new DbusAdaptorPrivilegedService(vibrator, leds);
+    dbusAdaptorPrivileged->setVibrateDurationExtraMs(static_cast<unsigned int>(std::stoul(devInfo->get("VibrateDurationExtraMs", "0"))));
+
+    new VibratorAdaptor(dbusAdaptorPrivileged);
+    new LedsAdaptor(dbusAdaptorPrivileged);
+    connection.registerObject("/com/lomiri/hfd/privileged", dbusAdaptorPrivileged);
+
     connection.registerService("com.lomiri.hfd");
 
     if (connection.lastError().isValid()) {

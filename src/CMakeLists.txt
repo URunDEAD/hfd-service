@@ -59,16 +59,37 @@ include_directories(
 )
 
 set(SERVICE_SRC
+    credentialscache.cpp
+    credentialscache.h
     service.cpp
     dbusAdaptor.h
+    usersettings.cpp
+    usersettings.h
 )
+
+set_source_files_properties(bus.xml PROPERTIES
+  CLASSNAME BusInterface
+  NO_NAMESPACE TRUE)
+qt5_add_dbus_interface(interface_files bus.xml businterface)
+
+set_source_files_properties(properties.xml PROPERTIES
+  CLASSNAME PropertiesInterface
+  NO_NAMESPACE TRUE)
+qt5_add_dbus_interface(interface_files properties.xml propertiesinterface)
+
+set(ACCOUNTS_INTERFACE_FILE "${DBUS_INTERFACES_DIR}/org.freedesktop.Accounts.xml")
+set_source_files_properties(${ACCOUNTS_INTERFACE_FILE} PROPERTIES
+  CLASSNAME ASInterface
+  NO_NAMESPACE TRUE)
+qt5_add_dbus_interface(interface_files ${ACCOUNTS_INTERFACE_FILE} asinterface)
 
 qt5_add_dbus_adaptor(SERVICE_SRC
     ${CMAKE_SOURCE_DIR}/data/com.lomiri.hfd.xml ${CMAKE_CURRENT_SOURCE_DIR}/dbusAdaptor.h DbusAdaptor
 )
 
 add_executable(hfd-service
-    ${SERVICE_SRC} 
+    ${SERVICE_SRC}
+    ${interface_files}
 )
 
 target_link_libraries(hfd-service
