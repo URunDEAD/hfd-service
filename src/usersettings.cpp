@@ -42,6 +42,9 @@ UserSettings::UserSettings(QDBusConnection bus, QObject *parent)
     auto watcher = new QDBusPendingCallWatcher(listCachedUsersAsync, this);
     QObject::connect(watcher, &QDBusPendingCallWatcher::finished, this,
                      &UserSettings::onListCachedUsersFinished);
+
+    QObject::connect(m_accountsService, &ASInterface::UserDeleted,
+                     this, &UserSettings::onUserDeleted);
 }
 
 void UserSettings::onListCachedUsersFinished(QDBusPendingCallWatcher * call)
@@ -209,6 +212,32 @@ void UserSettings::userAllowedChanged(UserSettings::UserInfo & user, bool allowe
         for (auto const & callback : qAsConst(user.pendingRequests))
             callback(user.allowed);
         user.pendingRequests = {};
+    }
+}
+
+void UserSettings::onUserDeleted(const QDBusObjectPath & userObjPath)
+{
+    auto userPath = userObjPath.path();
+
+    // The path looks like: `/org/freedesktop/Accounts/User1000`
+    bool ok;
+    uid_t uid = userPath.midRef(userPath.lastIndexOf("User") + 4).toInt(&ok, /* base */ 10);
+    if (!ok) {
+        qWarning() << "Unable to parse the object path" << userPath;
+        return;
+    }
+
+    if (m_infoForUid.contains(uid)) {
+        auto & user = m_infoForUid[uid];
+
+        // In case any pending requests exists at all.
+        for (auto const & callback : qAsConst(user.pendingRequests))
+            callback(false);
+
+        if (user.properties)
+            delete user.properties;
+
+        m_infoForUid.remove(uid);
     }
 }
 

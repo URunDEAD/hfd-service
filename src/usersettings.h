@@ -53,6 +53,8 @@ private:
 
     void userAllowedChanged(UserInfo & user, bool allowed);
 
+    void onUserDeleted(const QDBusObjectPath & userObjPath);
+
     QMap<uid_t, UserInfo> m_infoForUid;
 
     QDBusConnection m_bus;
