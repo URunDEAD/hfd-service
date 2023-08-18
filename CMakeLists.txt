@@ -11,6 +11,13 @@ include(GNUInstallDirs)
 pkg_check_modules(UDEV REQUIRED libudev)
 pkg_check_modules(DEVICEINFO REQUIRED deviceinfo)
 
+# For variables only.
+pkg_check_modules(DBUS_1 REQUIRED dbus-1)
+pkg_get_variable(DBUS_INTERFACES_DIR dbus-1 interfaces_dir)
+
+pkg_check_modules(ACCOUNTSSERVICE REQUIRED accountsservice)
+pkg_get_variable(AS_INTERFACES_DIR accountsservice interfacesdir)
+
 option(ENABLE_LIBHYBRIS "Enable libhybris support" ON)
 
 if (ENABLE_LIBHYBRIS)
@@ -62,3 +69,12 @@ install(FILES ${CMAKE_CURRENT_BINARY_DIR}/com.lomiri.hfd.service
   DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/dbus-1/system-services
 )
 
+# AccountsService interface
+install(FILES data/com.lomiri.hfd.AccountsService.Settings.xml
+  DESTINATION ${DBUS_INTERFACES_DIR})
+install(DIRECTORY DESTINATION ${AS_INTERFACES_DIR})
+install(CODE "message(STATUS
+  \"Symlinking: \$ENV{DESTDIR}${AS_INTERFACES_DIR}/com.lomiri.hfd.AccountsService.Settings.xml\")")
+install(CODE "execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink
+  ../../dbus-1/interfaces/com.lomiri.hfd.AccountsService.Settings.xml
+  \$ENV{DESTDIR}${AS_INTERFACES_DIR}/com.lomiri.hfd.AccountsService.Settings.xml)")

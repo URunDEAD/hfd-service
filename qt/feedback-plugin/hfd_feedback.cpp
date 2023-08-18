@@ -40,7 +40,12 @@ hfd::Feedback::Feedback() : QObject(),
                              enabled(false),
                              state(QFeedbackEffect::Stopped)
 {
-    m_interface = std::make_shared<com::lomiri::hfd::Vibrator>("com.lomiri.hfd", "/com/lomiri/hfd",
+    const auto objectPath =
+        qEnvironmentVariableIsSet("HFD_USE_PRIVILEGED_INTERFACE")
+        ? QStringLiteral("/com/lomiri/hfd/privileged")
+        : QStringLiteral("/com/lomiri/hfd");
+
+    m_interface = std::make_shared<com::lomiri::hfd::Vibrator>("com.lomiri.hfd", objectPath,
                                                             QDBusConnection::systemBus(), this);
     actuatorList << createFeedbackActuator(this, 42);
 }

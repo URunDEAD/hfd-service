@@ -17,6 +17,9 @@ Build-Depends: cmake (>= 2.8.10),
                cmake-extras,
                qtdeclarative5-dev,
                systemd [linux-any],
+               accountsservice:native,
+               libaccountsservice-dev,
+               libdbus-1-dev,
 Maintainer: Marius Gripsgard <marius@ubports.com>
 Standards-Version: 3.9.5
 Homepage: https://gitlab.com/ubports/core/hfd-service/
