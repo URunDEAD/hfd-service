@@ -1,6 +1,27 @@
+2023-10-15 Mike Gabriel
+
+        * Release 0.2.1 (HEAD -> main, tag: 0.2.1)
+
+2023-08-18 Mike Gabriel
+
+        * Merge branch 'personal/peat-psuwit/othervibrate' into 'main'
+          (b268aaa)
+
+2023-08-11 Ratchanan Srirattanamet
+
+        * usersettings: handle user deletion (b2e97a7)
+
+2023-08-10 Ratchanan Srirattanamet
+
+        * qt/feedback-plugin: use privileged path if env var is set (e991b80)
+
+2023-08-04 Ratchanan Srirattanamet
+
+        * Add settings to allow disabling general vibration (f9ecd13)
+
 2023-02-05 Mike Gabriel
 
-        * Release 0.2.0 (HEAD -> main, tag: 0.2.0)
+        * Release 0.2.0 (04ff43e) (tag: 0.2.0)
 
 2023-01-30 Mike Gabriel
 

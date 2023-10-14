@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
-project(hfd-service VERSION 0.2.0)
+project(hfd-service VERSION 0.2.1)
 set(CMAKE_CXX_STANDARD 14)
 
 set(CMAKE_AUTOMOC ON)
