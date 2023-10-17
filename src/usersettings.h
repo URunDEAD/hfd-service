@@ -17,6 +17,7 @@
  */
 
 #include <functional>
+#include <unistd.h>
 
 #include <QDBusConnection>
 #include <QMap>
