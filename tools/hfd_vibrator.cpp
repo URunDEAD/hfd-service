@@ -22,11 +22,7 @@
 int main() {
     auto leds = hfd::Vibrator::create();
 
-    leds->vibrate();
+    leds->vibrate(500);
 
     sleep(1);
-
-    leds->rumble(500, 5);
-    sleep(6);
-
 }

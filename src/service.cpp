@@ -22,6 +22,7 @@
 #include "leds.h"
 #include "usersettings.h"
 #include "utils.h"
+#include "vibrator-controller.h"
 
 #include "hfdadaptor.h"
 
@@ -38,9 +39,9 @@
 class DbusAdaptorPrivilegedService : public DbusAdaptor, protected QDBusContext {
     Q_OBJECT
 public:
-    DbusAdaptorPrivilegedService(std::shared_ptr<hfd::Vibrator> vibrator, std::shared_ptr<hfd::Leds> leds)
+    DbusAdaptorPrivilegedService(std::shared_ptr<hfd::VibratorController> vibratorCtl, std::shared_ptr<hfd::Leds> leds)
         : DbusAdaptor()
-        , m_vibrator(vibrator)
+        , m_vibratorCtl(vibratorCtl)
         , m_leds(leds)
     {}
 
@@ -50,18 +51,21 @@ public:
     };
 
 public Q_SLOTS:
-    void vibrate() override { m_vibrator->vibrate(); };
+    void vibrate() override {
+        constexpr uint defaultVibrationMs = 500;
+        m_vibratorCtl->vibrate(defaultVibrationMs);
+    };
     void vibrate(int durationMs) override {
         if (!verifyDBusInt("durationMs", durationMs, 1, 1000 * 60))
             return;
-        m_vibrator->vibrate(durationMs + m_vibrateDurationExtraMs);
+        m_vibratorCtl->vibrate(durationMs + m_vibrateDurationExtraMs);
     };
     void rumble(int durationMs, int repeat) override {
         if (!verifyDBusInt("durationMs", durationMs, 1, 1000))
             return;
         if (!verifyDBusInt("repeat", repeat, 1, 60))
             return;
-        m_vibrator->rumble(durationMs + m_vibrateDurationExtraMs, repeat);
+        m_vibratorCtl->rumble(durationMs + m_vibrateDurationExtraMs, repeat);
     };
 
     void setState(int state) override { m_leds->setState(hfd::utils::toState(state)); };
@@ -88,7 +92,7 @@ protected:
     }
 
 private:
-    std::shared_ptr<hfd::Vibrator> m_vibrator;
+    std::shared_ptr<hfd::VibratorController> m_vibratorCtl;
     std::shared_ptr<hfd::Leds> m_leds;
     uint m_vibrateDurationExtraMs;
 };
@@ -97,11 +101,11 @@ class DbusAdaptorService : public DbusAdaptor, protected QDBusContext {
     Q_OBJECT
 public:
     DbusAdaptorService(
-        std::shared_ptr<hfd::Vibrator> vibrator,
+        std::shared_ptr<hfd::VibratorController> vibratorCtl,
         std::shared_ptr<hfd::Leds> leds,
         QDBusConnection const& connection)
         : DbusAdaptor()
-        , m_vibrator(vibrator)
+        , m_vibratorCtl(vibratorCtl)
         , m_leds(leds)
         , m_connection(connection)
         , m_credcache(connection)
@@ -116,7 +120,8 @@ public:
 public Q_SLOTS:
     void vibrate() override {
         callIfVibrateAllowed([this] () {
-            m_vibrator->vibrate();
+            constexpr uint defaultVibrationMs = 500;
+            m_vibratorCtl->vibrate(defaultVibrationMs);
         });
     };
     void vibrate(int durationMs) override {
@@ -124,7 +129,7 @@ public Q_SLOTS:
             return;
 
         callIfVibrateAllowed([=] () {
-            m_vibrator->vibrate(durationMs + m_vibrateDurationExtraMs);
+            m_vibratorCtl->vibrate(durationMs + m_vibrateDurationExtraMs);
         });
     };
     void rumble(int durationMs, int repeat) override {
@@ -133,7 +138,7 @@ public Q_SLOTS:
         if (!verifyDBusInt("repeat", repeat, 1, 60))
             return;
         callIfVibrateAllowed([=] () {
-            m_vibrator->rumble(durationMs + m_vibrateDurationExtraMs, repeat);
+            m_vibratorCtl->rumble(durationMs + m_vibrateDurationExtraMs, repeat);
         });
     };
 
@@ -210,7 +215,7 @@ private:
         }
     }
 
-    std::shared_ptr<hfd::Vibrator> m_vibrator;
+    std::shared_ptr<hfd::VibratorController> m_vibratorCtl;
     std::shared_ptr<hfd::Leds> m_leds;
     QDBusConnection m_connection;
 
@@ -235,6 +240,7 @@ int main(int argc, char *argv[]) {
         vibrator = hfd::Vibrator::create(vibrator_impl_env);
     else
         vibrator = hfd::Vibrator::create();
+    auto vibratorCtl = std::make_shared<hfd::VibratorController>(vibrator);
 
     std::cout << "Starting leds impl" << std::endl;
     std::shared_ptr<hfd::Leds> leds;
@@ -247,7 +253,7 @@ int main(int argc, char *argv[]) {
 
     QDBusConnection connection = QDBusConnection::systemBus();
 
-    auto dbusAdaptor = new DbusAdaptorService(vibrator, leds, connection);
+    auto dbusAdaptor = new DbusAdaptorService(vibratorCtl, leds, connection);
     std::unique_ptr<DeviceInfo> devInfo = std::make_unique<DeviceInfo>();
     dbusAdaptor->setVibrateDurationExtraMs(static_cast<unsigned int>(std::stoul(devInfo->get("VibrateDurationExtraMs", "0"))));
 
@@ -255,7 +261,7 @@ int main(int argc, char *argv[]) {
     new LedsAdaptor(dbusAdaptor);
     connection.registerObject("/com/lomiri/hfd", dbusAdaptor);
 
-    auto dbusAdaptorPrivileged = new DbusAdaptorPrivilegedService(vibrator, leds);
+    auto dbusAdaptorPrivileged = new DbusAdaptorPrivilegedService(vibratorCtl, leds);
     dbusAdaptorPrivileged->setVibrateDurationExtraMs(static_cast<unsigned int>(std::stoul(devInfo->get("VibrateDurationExtraMs", "0"))));
 
     new VibratorAdaptor(dbusAdaptorPrivileged);

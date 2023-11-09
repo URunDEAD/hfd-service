@@ -20,7 +20,6 @@
 #include "vibrator-ff.h"
 #include "vibrator-sysfs.h"
 #include "vibrator-legacy.h"
-#include "repeatThread.h"
 #ifdef HAVE_LIBGBINDER
 #include "vibrator-binder.h"
 #endif
@@ -94,49 +93,11 @@ std::shared_ptr<Vibrator> Vibrator::create(std::string type)
 
 
 Vibrator::Vibrator()
-  : m_defaultDurationMs(500),
-    m_defaultRepeat(1)
 {
-}
-
-void Vibrator::vibrate()
-{
-    vibrate(m_defaultDurationMs);
 }
 
 void Vibrator::vibrate(int durationMs)
 {
     configure(State::On, durationMs);
-}
-
-void Vibrator::rumble(int durationMs, int repeat)
-{
-    m_repeatThread = std::make_shared<RepeatThread>([=](){
-        vibrate(durationMs);
-    }, durationMs*2, repeat);
-}
-
-int Vibrator::defaultDurationMs() const
-{
-    return m_defaultDurationMs;
-}
-
-void Vibrator::setDefaultDurationMs(int durationMs)
-{
-    if (m_defaultDurationMs != durationMs) {
-        m_defaultDurationMs = durationMs;
-    }
-}
-
-int Vibrator::defaultRepeat() const
-{
-    return m_defaultRepeat;
-}
-
-void Vibrator::setDefaultRepeat(int repeat)
-{
-    if (m_defaultRepeat != repeat) {
-        m_defaultRepeat = repeat;
-    }
 }
 }
