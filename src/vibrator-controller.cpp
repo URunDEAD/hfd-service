@@ -18,6 +18,8 @@
 
 #include <vibrator-controller.h>
 
+#include <deviceinfo.h>
+
 #include <vibrator.h>
 
 namespace hfd {
@@ -25,6 +27,10 @@ namespace hfd {
 VibratorController::VibratorController(const std::shared_ptr<Vibrator> &vibrator, QObject * parent)
     : m_vibrator(vibrator)
 {
+    DeviceInfo devInfo;
+
+    m_vibrateDurationExtraMs = std::stoul(devInfo.get("VibrateDurationExtraMs", "0"));
+
     m_timer.setSingleShot(true);
     // Not the best for power consumption, but to make sure the pattern doesn't skew.
     m_timer.setTimerType(Qt::PreciseTimer);
@@ -34,21 +40,41 @@ VibratorController::VibratorController(const std::shared_ptr<Vibrator> &vibrator
 
 void VibratorController::vibratePattern(const QVector<quint32> &pattern, quint32 repeat)
 {
-    if (m_timer.isActive()) {
-        // Cancel ongoing pattern in place of this one.
-        // TODO: will this enable denial of service?
-        m_timer.stop();
-    }
-
     m_currentPattern = pattern;
     m_currentPatternOffset = 0;
     m_remainingRepeat = repeat;
 
-    continuePattern();
+    // Use timer, instead of calling continuePattern() directly, to avoid
+    // blocking DBus call in case vibrator implementation blocks.
+    // This will also cancel an ongoing pattern, if any, in favor of this one.
+    m_firstRun = true;
+    m_timer.start(0 /* ms */);
 }
 
+/*
+ * Here, we're assuming that VibrateDurationExtraMs is the time it takes for the
+ * vibrator to spin up and spin down. So, the idea is we split the 'off' part of
+ * the pattern into the spin down, rest and the spin up (rest can be 0 if not
+ * enough 'off' time is left in the pattern).
+ *
+ * We sleep through the first and second part, then wake up and command
+ * vibration for spin up + (next) pattern 'on' time. This results in perceptible
+ * vibration for a short pattern without making it actually longer.
+ */
 void VibratorController::continuePattern()
 {
+    /* Get previous off ms before advancing repeat. */
+    uint prevPatOffMs;
+    if (m_firstRun) {
+        prevPatOffMs = UINT_MAX;
+        m_firstRun = false;
+    } else if (m_currentPatternOffset % 2 != 0) {
+        // Can happens for odd-numbered pattern length.
+        prevPatOffMs = 0;
+    } else {
+        prevPatOffMs = m_currentPattern[m_currentPatternOffset - 1];
+    }
+
     if (m_currentPatternOffset == m_currentPattern.size() &&
         m_remainingRepeat != 0)
     {
@@ -63,22 +89,28 @@ void VibratorController::continuePattern()
         return;
     }
 
-    uint onMs = m_currentPattern[m_currentPatternOffset];
+    uint patOnMs = m_currentPattern[m_currentPatternOffset];
     m_currentPatternOffset++;
 
-    uint sleepMs = onMs;
+    uint patOffMs = 0;
     if (m_currentPatternOffset != m_currentPattern.size()) {
-        uint offMs = m_currentPattern[m_currentPatternOffset];
-        sleepMs += offMs;
+        patOffMs = m_currentPattern[m_currentPatternOffset];
         m_currentPatternOffset++;
     }
 
-    m_timer.setInterval(sleepMs);
-    m_timer.start();
+    uint spinUpMs = prevPatOffMs / 2 > m_vibrateDurationExtraMs
+        ? m_vibrateDurationExtraMs
+        : prevPatOffMs / 2;
+    uint spinDownAndRestMs = patOffMs / 2 > m_vibrateDurationExtraMs
+        ? patOffMs - m_vibrateDurationExtraMs
+        : (patOffMs + 1) / 2;
+        // +1 makes the equation rounds the number up instead of down.
+
+    m_timer.start(spinUpMs + patOnMs + spinDownAndRestMs);
 
     // Call vibrator after starting timer. Some vibrator implementation blocks
     // for the vibration duration.
-    m_vibrator->vibrate(onMs);
+    m_vibrator->vibrate(spinUpMs + patOnMs);
 }
 
 } // namespace hfd

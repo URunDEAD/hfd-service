@@ -43,6 +43,7 @@ private:
     void continuePattern();
 
     std::shared_ptr<Vibrator> m_vibrator;
+    uint m_vibrateDurationExtraMs;
 
     QTimer m_timer;
     /* In the format of [onMs, offMs, ...] */
@@ -50,6 +51,7 @@ private:
     uint m_currentPatternOffset = 0;
     /* Includes the current iteration. */
     uint m_remainingRepeat = 0;
+    bool m_firstRun = false;
 };
 
 } // namespace hfd
