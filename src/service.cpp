@@ -60,6 +60,16 @@ public Q_SLOTS:
             return;
         m_vibratorCtl->rumble(durationMs, repeat);
     };
+    void vibratePattern(const QVector<uint> &patternMs, uint repeat) override {
+        for (uint patOnOffMs : patternMs) {
+            if (!verifyDBusInt("patternMs", patOnOffMs, 1, 1000))
+                return;
+        }
+        if (!verifyDBusInt("repeat", repeat, 1, 60))
+            return;
+
+        m_vibratorCtl->vibratePattern(patternMs, repeat);
+    }
 
     void setState(int state) override { m_leds->setState(hfd::utils::toState(state)); };
     void setColor(unsigned int color) override { m_leds->setColor(color); }
@@ -128,6 +138,18 @@ public Q_SLOTS:
             m_vibratorCtl->rumble(durationMs, repeat);
         });
     };
+    void vibratePattern(const QVector<uint> &patternMs, uint repeat) override {
+        for (uint patOnOffMs : patternMs) {
+            if (!verifyDBusInt("patternMs", patOnOffMs, 1, 1000))
+                return;
+        }
+        if (!verifyDBusInt("repeat", repeat, 1, 60))
+            return;
+
+        callIfVibrateAllowed([=] () {
+            m_vibratorCtl->vibratePattern(patternMs, repeat);
+        });
+    }
 
     // TODO: maybe disallow LEDs on the unprivileged object path.
     void setState(int state) override { m_leds->setState(hfd::utils::toState(state)); };
