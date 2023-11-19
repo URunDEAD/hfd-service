@@ -10,6 +10,11 @@
 			<arg name="durationMs" type="i" direction="in" />
 			<arg name="repeat" type="i" direction="in" />
 		</method>
+		<method name="vibratePattern">
+			<annotation name="org.qtproject.QtDBus.QtTypeName.In0" value="QVector&lt;uint&gt;" />
+			<arg name="patternMs" type="au" direction="in" />
+			<arg name="repeat" type="u" direction="in" />
+		</method>
 	</interface>
 	<interface name="com.lomiri.hfd.Leds">
 		<method name="setState">

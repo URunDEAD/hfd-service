@@ -65,6 +65,8 @@ set(SERVICE_SRC
     dbusAdaptor.h
     usersettings.cpp
     usersettings.h
+    vibrator-controller.cpp
+    vibrator-controller.h
 )
 
 set_source_files_properties(bus.xml PROPERTIES

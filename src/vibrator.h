@@ -27,24 +27,11 @@ class Vibrator {
 public:
     Vibrator();
 
-    void vibrate();
     void vibrate(int durationMs);
-    void rumble(int durationMs, int repeat);
-
-    int defaultDurationMs() const;
-    void setDefaultDurationMs(int durationMs);
-
-    int defaultRepeat() const;
-    void setDefaultRepeat(int repeat);
-
 
     static std::shared_ptr<Vibrator> create();
     static std::shared_ptr<Vibrator> create(std::string type);
 protected:
     virtual void configure(State state, int durationMs) = 0;
-
-    int m_defaultDurationMs;
-    int m_defaultRepeat;
-    std::shared_ptr<RepeatThread> m_repeatThread;
 };
 }

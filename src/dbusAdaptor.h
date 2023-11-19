@@ -30,6 +30,7 @@ public Q_SLOTS:
     virtual void vibrate() = 0;
     virtual void vibrate(int durationMs) = 0;
     virtual void rumble(int durationMs, int repeat) = 0;
+    virtual void vibratePattern(const QVector<uint> &patternMs, uint repeat) = 0;
 
     virtual void setState(int state) = 0;
     virtual void setColor(unsigned int color) = 0;
