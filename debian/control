@@ -1,7 +1,7 @@
 Source: hfd-service
 Section: admin
 Priority: optional
-Build-Depends: cmake (>= 2.8.10),
+Build-Depends: cmake (>= 3.5),
                debhelper-compat (= 12),
                pkg-config,
                libandroid-properties-dev,
@@ -22,15 +22,18 @@ Build-Depends: cmake (>= 2.8.10),
                libdbus-1-dev,
 Maintainer: Marius Gripsgard <marius@ubports.com>
 Standards-Version: 3.9.5
-Homepage: https://gitlab.com/ubports/core/hfd-service/
+Homepage: https://gitlab.com/ubports/development/core/hfd-service
+Vcs-Git: https://gitlab.com/ubports/development/core/hfd-service.git
+Vcs-Browser: https://gitlab.com/ubports/development/core/hfd-service
 
 Package: hfd-service
 Section: libs
 Architecture: any
 Depends: ${misc:Depends},
          ${shlibs:Depends},
-Description: Library to detect and configure devices 
- Library to detect and configure devices 
+Description: HFD service for Lomiri
+  HFD service is a DBus activated service that manages human feedback devices
+  such as leds and vibrators on mobile devices.
 
 Package: libqt5feedback5-hfd
 Section: libs
@@ -38,8 +41,12 @@ Architecture: any
 Depends: ${misc:Depends},
          ${shlibs:Depends},
          hfd-service,
-Description: Library to detect and configure devices 
- Library to detect and configure devices 
+Description: QtFeedback Qt plugin for HFD service
+  HFD service is a DBus activated service that manages human feedback devices
+  such as leds and vibrators on mobile devices.
+  .
+  This package provides a Qt plugin which integrates HFD service with the
+  QtFeedback API.
 
 Package: qml-module-hfd
 Section: libs
@@ -47,9 +54,11 @@ Architecture: any
 Depends: ${misc:Depends},
          ${shlibs:Depends},
          hfd-service,
-Description: Library to detect and configure devices 
- Library to detect and configure devices 
-
+Description: QML plugin for HFD service
+  HFD service is a DBus activated service that manages human feedback devices
+  such as leds and vibrators on mobile devices.
+  .
+  This package provides a QML plugin which provides access to HFD service.
 
 Package: hfd-service-tools
 Section: admin
@@ -57,5 +66,8 @@ Architecture: any
 Depends: ${misc:Depends},
          ${shlibs:Depends},
          hfd-service,
-Description: Tools to detect and configure devices 
- Tools to detect and configure devices 
+Description: Tools for HFD service
+  HFD service is a DBus activated service that manages human feedback devices
+  such as leds and vibrators on mobile devices.
+  .
+  This package provides tools for testing HFD service.
