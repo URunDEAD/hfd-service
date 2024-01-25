@@ -1,3 +1,10 @@
+hfd-service (0.2.2) unstable; urgency=medium
+
+  * Upstream-provided Debian package for hfd-service. See upstream
+    ChangeLog for recent changes.
+
+ -- UBports developers <developers@ubports.com>  Thu, 25 Jan 2024 16:57:24 +0100
+
 hfd-service (0.2.1) unstable; urgency=medium
 
   * Upstream-provided Debian package for hfd-service. See upstream

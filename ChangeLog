@@ -1,6 +1,40 @@
+2024-01-25 Mike Gabriel
+
+        * Release 0.2.2 (HEAD -> main, tag: 0.2.2)
+        * Merge branch 'personal/gberh/improve-metadata' into 'main'
+          (b5451ce)
+
+2024-01-25 Guido Berhoerster
+
+        * Improve README file and Debian package metadata (28e9b3e)
+
+2023-11-19 Marius Gripsgard
+
+        * Merge branch 'personal/peat-psuwit/11-vibratePattern' into 'main'
+          (dd7626a)
+
+2023-11-10 Ratchanan Srirattanamet
+
+        * service: add vibratePattern DBus API (d9b103c)
+
+2023-11-09 Ratchanan Srirattanamet
+
+        * Moves vibrateDurationExtraMs handling to VibratorController
+          (ef940dd)
+        * vibrator: move pattern repetition to non-core and use QTimer
+          (d1054fb)
+
+2023-11-10 Marius Gripsgard
+
+        * Merge branch 'fix/musl-build' into 'main' (06ea1d2)
+
+2023-10-17 Bart Ribbers
+
+        * Add missing include to fix Musl compatibility (44fa015)
+
 2023-10-15 Mike Gabriel
 
-        * Release 0.2.1 (HEAD -> main, tag: 0.2.1)
+        * Release 0.2.1 (23ade31) (tag: 0.2.1)
 
 2023-08-18 Mike Gabriel
 
