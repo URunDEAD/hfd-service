@@ -1,5 +1,5 @@
 usr/libexec/hfd-service
-lib/systemd/system/hfd-service.service
+usr/lib/systemd/system/hfd-service.service
 etc/dbus-1/system.d/com.lomiri.hfd.conf
 usr/share/dbus-1/system-services/com.lomiri.hfd.service
 usr/share/dbus-1/interfaces/com.lomiri.hfd.AccountsService.Settings.xml
