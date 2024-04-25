@@ -3,5 +3,15 @@
 %:
 	dh $@ --buildsystem cmake
 
+# FIXME: This should say `--derives-from UBports`, but we haven't got time to
+# make a dpkg vendor entry yet.
+DISTRO_CMAKE_FLAGS = $(shell \
+	dpkg-vendor --derives-from Ubuntu \
+		&& echo '-DENABLE_LIBHYBRIS=ON  -DENABLE_LIBGBINDER=ON' \
+		|| echo '-DENABLE_LIBHYBRIS=OFF -DENABLE_LIBGBINDER=OFF')
+
+override_dh_auto_configure:
+	dh_auto_configure -- $(DISTRO_CMAKE_FLAGS)
+
 override_dh_missing:
 	dh_missing --fail-missing
