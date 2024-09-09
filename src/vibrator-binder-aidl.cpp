@@ -15,33 +15,38 @@
  *
  * Author: Marius Gripsgard <marius@ubports.com>
  * Author: Erfan Abdi <erfangplus@gmail.com>
+ * Author: Muhammad <muhammad23012009@hotmail.com>
  */
 
-#include "vibrator-binder.h"
+#include "vibrator-binder-aidl.h"
 
 #include <iostream>
 #include <unistd.h>
 
-#define BINDER_VIBRATOR_SERVICE_DEVICE "/dev/hwbinder"
-#define BINDER_VIBRATOR_SERVICE_IFACE "android.hardware.vibrator@1.0::IVibrator"
-#define BINDER_VIBRATOR_SERVICE_FQNAME BINDER_VIBRATOR_SERVICE_IFACE "/default"
+#define BINDER_AIDL_VIBRATOR_SERVICE_DEVICE "/dev/binder"
+#define BINDER_AIDL_VIBRATOR_SERVICE_IFACE "android.hardware.vibrator.IVibrator"
+#define BINDER_AIDL_VIBRATOR_SERVICE_FQNAME BINDER_AIDL_VIBRATOR_SERVICE_IFACE "/default"
+#define BINDER_AIDL_VIBRATOR_ON (3)
+#define BINDER_AIDL_VIBRATOR_OFF (2)
 
 namespace hfd {
 
-bool VibratorBinder::usable() {
+bool VibratorBinderAidl::usable() {
     GBinderServiceManager *sm;
     GBinderRemoteObject *remote;
     GBinderClient *client;
-    sm = gbinder_servicemanager_new(BINDER_VIBRATOR_SERVICE_DEVICE);
+
+    sm = gbinder_servicemanager_new(BINDER_AIDL_VIBRATOR_SERVICE_DEVICE);
     if (!sm)
         return false;
 
-    remote = gbinder_servicemanager_get_service_sync(sm, BINDER_VIBRATOR_SERVICE_FQNAME, NULL);
+    remote = gbinder_servicemanager_get_service_sync(sm, BINDER_AIDL_VIBRATOR_SERVICE_FQNAME, NULL);
     if (!remote) {
         gbinder_servicemanager_unref(sm);
         return false;
     }
-    client = gbinder_client_new(remote, BINDER_VIBRATOR_SERVICE_IFACE);
+
+    client = gbinder_client_new(remote, BINDER_AIDL_VIBRATOR_SERVICE_IFACE);
     if (!client) {
         gbinder_remote_object_unref(remote);
         gbinder_servicemanager_unref(sm);
@@ -53,17 +58,19 @@ bool VibratorBinder::usable() {
     return true;
 }
 
-VibratorBinder::VibratorBinder(): Vibrator() {
-    mSm = gbinder_servicemanager_new(BINDER_VIBRATOR_SERVICE_DEVICE);
+VibratorBinderAidl::VibratorBinderAidl(): Vibrator() {
+    mSm = gbinder_servicemanager_new(BINDER_AIDL_VIBRATOR_SERVICE_DEVICE);
     if (!mSm)
         return;
 
-    mRemote = gbinder_servicemanager_get_service_sync(mSm, BINDER_VIBRATOR_SERVICE_FQNAME, NULL);
+    mRemote = gbinder_servicemanager_get_service_sync(mSm, BINDER_AIDL_VIBRATOR_SERVICE_FQNAME, NULL);
+
     if (!mRemote) {
         gbinder_servicemanager_unref(mSm);
         return;
     }
-    mClient = gbinder_client_new(mRemote, BINDER_VIBRATOR_SERVICE_IFACE);
+
+    mClient = gbinder_client_new(mRemote, BINDER_AIDL_VIBRATOR_SERVICE_IFACE);
     if (!mClient) {
         gbinder_remote_object_unref(mRemote);
         gbinder_servicemanager_unref(mSm);
@@ -74,7 +81,7 @@ VibratorBinder::VibratorBinder(): Vibrator() {
     configure(State::Off, 0);
 }
 
-VibratorBinder::~VibratorBinder()
+VibratorBinderAidl::~VibratorBinderAidl()
 {
     gbinder_remote_object_unref(mRemote);
     gbinder_servicemanager_unref(mSm);
@@ -84,18 +91,20 @@ VibratorBinder::~VibratorBinder()
     }
 }
 
-void VibratorBinder::configure(State state, int durationMs) {
+void VibratorBinderAidl::configure(State state, int durationMs) {
     int status;
     GBinderRemoteReply *reply;
     GBinderLocalRequest *req = gbinder_client_new_request(mClient);
 
     if (state == State::On) {
         gbinder_local_request_append_int32(req, durationMs);
+        gbinder_local_request_append_local_object(req, nullptr);
+
         reply = gbinder_client_transact_sync_reply(mClient,
-                                                   1 /* on */, req, &status);
+                                                   BINDER_AIDL_VIBRATOR_ON /* on */, req, &status);
     } else {
         reply = gbinder_client_transact_sync_reply(mClient,
-                                                   2 /* off */, req, &status);
+                                                   BINDER_AIDL_VIBRATOR_OFF /* off */, req, &status);
     }
     gbinder_local_request_unref(req);
 

@@ -21,7 +21,8 @@
 #include "vibrator-sysfs.h"
 #include "vibrator-legacy.h"
 #ifdef HAVE_LIBGBINDER
-#include "vibrator-binder.h"
+#include "vibrator-binder-aidl.h"
+#include "vibrator-binder-hidl.h"
 #endif
 
 #include <iostream>
@@ -44,9 +45,13 @@ protected:
 std::shared_ptr<Vibrator> Vibrator::create()
 {
 #ifdef HAVE_LIBGBINDER
-    if (VibratorBinder::usable()) {
-        std::cout << "Using binder vibrator" << std::endl;
-        return std::make_shared<VibratorBinder>();
+    if (VibratorBinderAidl::usable()) {
+        std::cout << "Using binder AIDL vibrator" << std::endl;
+        return std::make_shared<VibratorBinderAidl>();
+    }
+    else if (VibratorBinderHidl::usable()) {
+        std::cout << "Using binder HIDL vibrator" << std::endl;
+        return std::make_shared<VibratorBinderHidl>();
     }
     else
 #endif
@@ -71,12 +76,15 @@ std::shared_ptr<Vibrator> Vibrator::create(std::string type)
 {
     if (type == "ff") {
         std::cout << "Using force feedback vibrator" << std::endl;
-        return std::make_shared<VibratorFF>();  
+        return std::make_shared<VibratorFF>();
     }
 #ifdef HAVE_LIBGBINDER
-    else if (type == "binder") {
-        std::cout << "Using binder vibrator" << std::endl;
-        return std::make_shared<VibratorBinder>();
+    else if (type == "binder-aidl") {
+        std::cout << "Using binder AIDL vibrator" << std::endl;
+        return std::make_shared<VibratorBinderAidl>();
+    } else if (type == "binder-hidl" || type == "binder") {
+        std::cout << "Using binder HIDL vibrator" << std::endl;
+        return std::make_shared<VibratorBinderHidl>();
     }
 #endif
     else if (type == "sysfs") {

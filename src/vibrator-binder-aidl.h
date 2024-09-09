@@ -26,17 +26,17 @@
 #include <gbinder.h>
 
 namespace hfd {
-class VibratorBinder : public Vibrator {
+class VibratorBinderAidl : public Vibrator {
 
 public:
-    VibratorBinder();
-    ~VibratorBinder();
+    VibratorBinderAidl();
+    ~VibratorBinderAidl();
 
     static bool usable();
 
 protected:
     void configure(State state, int durationMs) override;
-    
+
 private:
     GBinderServiceManager *mSm;
     GBinderRemoteObject *mRemote;
