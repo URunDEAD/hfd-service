@@ -34,7 +34,6 @@ namespace hfd {
 bool VibratorBinderAidl::usable() {
     GBinderServiceManager *sm;
     GBinderRemoteObject *remote;
-    GBinderClient *client;
 
     sm = gbinder_servicemanager_new(BINDER_AIDL_VIBRATOR_SERVICE_DEVICE);
     if (!sm)
@@ -46,12 +45,6 @@ bool VibratorBinderAidl::usable() {
         return false;
     }
 
-    client = gbinder_client_new(remote, BINDER_AIDL_VIBRATOR_SERVICE_IFACE);
-    if (!client) {
-        gbinder_remote_object_unref(remote);
-        gbinder_servicemanager_unref(sm);
-        return false;
-    }
     gbinder_remote_object_unref(remote);
     gbinder_servicemanager_unref(sm);
 
