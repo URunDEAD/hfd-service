@@ -24,7 +24,8 @@ if (HAVE_LIBGBINDER)
 
     set(LIBGBINDER_SRC
         leds-binder.cpp
-        vibrator-binder.cpp
+        vibrator-binder-aidl.cpp
+        vibrator-binder-hidl.cpp
     )
 
     set(LIBGBINDER_LIBRARIES
