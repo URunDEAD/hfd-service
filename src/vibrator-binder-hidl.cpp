@@ -38,33 +38,35 @@ bool VibratorBinderHidl::usable() {
     if (!sm)
         return false;
 
+    /* "autoreleased" i.e. unowned */
     remote = gbinder_servicemanager_get_service_sync(sm, BINDER_HIDL_VIBRATOR_SERVICE_FQNAME, NULL);
     if (!remote) {
         gbinder_servicemanager_unref(sm);
         return false;
     }
 
-    gbinder_remote_object_unref(remote);
     gbinder_servicemanager_unref(sm);
 
     return true;
 }
 
 VibratorBinderHidl::VibratorBinderHidl(): Vibrator() {
+    GBinderRemoteObject *remote;
+
     mSm = gbinder_servicemanager_new(BINDER_HIDL_VIBRATOR_SERVICE_DEVICE);
     if (!mSm)
         return;
 
-    mRemote = gbinder_servicemanager_get_service_sync(mSm, BINDER_HIDL_VIBRATOR_SERVICE_FQNAME, NULL);
+    /* "autoreleased" i.e. unowned */
+    remote = gbinder_servicemanager_get_service_sync(mSm, BINDER_HIDL_VIBRATOR_SERVICE_FQNAME, NULL);
 
-    if (!mRemote) {
+    if (!remote) {
         gbinder_servicemanager_unref(mSm);
         return;
     }
 
-    mClient = gbinder_client_new(mRemote, BINDER_HIDL_VIBRATOR_SERVICE_IFACE);
+    mClient = gbinder_client_new(remote, BINDER_HIDL_VIBRATOR_SERVICE_IFACE);
     if (!mClient) {
-        gbinder_remote_object_unref(mRemote);
         gbinder_servicemanager_unref(mSm);
         return;
     }
@@ -75,7 +77,6 @@ VibratorBinderHidl::VibratorBinderHidl(): Vibrator() {
 
 VibratorBinderHidl::~VibratorBinderHidl()
 {
-    gbinder_remote_object_unref(mRemote);
     gbinder_servicemanager_unref(mSm);
 
     if (m_thread) {

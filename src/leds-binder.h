@@ -72,7 +72,6 @@ private:
     bool initClient();
 
     GBinderServiceManager* mSm;  
-    GBinderRemoteObject* mRemote;
     GBinderClient* mClient;
 };
 }
