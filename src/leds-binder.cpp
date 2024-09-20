@@ -63,6 +63,7 @@ bool LedsBinder::usable() {
         gbinder_remote_reply_init_reader(reply, &reader);
         status = gbinder_reader_read_uint32(&reader, &value);
         if (value != GBINDER_STATUS_OK) {
+            gbinder_client_unref(client);
             gbinder_servicemanager_unref(sm);
             return false;
         }
@@ -73,11 +74,13 @@ bool LedsBinder::usable() {
         types = (const int32_t*) gbinder_reader_read_hidl_vec(&reader, &count, &vecSize);
         for (int i = 0; i < count; i++) {
             if (types[i] == LIGHT_TYPE_NOTIFICATIONS) {
+                gbinder_client_unref(client);
                 gbinder_servicemanager_unref(sm);
                 return true;
             }
         }
     }
+    gbinder_client_unref(client);
     gbinder_servicemanager_unref(sm);
     return false;
 }
