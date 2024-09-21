@@ -99,11 +99,13 @@ LedsBinder::LedsBinder() : Leds() {
     remote = gbinder_servicemanager_get_service_sync(mSm, BINDER_LIGHT_SERVICE_FQNAME, NULL);
     if (!remote) {
         gbinder_servicemanager_unref(mSm);
+        mSm = nullptr;
         return;
     }
     mClient = gbinder_client_new(remote, BINDER_LIGHT_SERVICE_IFACE);
     if (!mClient) {
         gbinder_servicemanager_unref(mSm);
+        mSm = nullptr;
         return;
     }
 
@@ -113,11 +115,16 @@ LedsBinder::LedsBinder() : Leds() {
 
 LedsBinder::~LedsBinder()
 {
-    gbinder_client_unref(mClient);
-    gbinder_servicemanager_unref(mSm);
+    if (mClient)
+        gbinder_client_unref(mClient);
+    if (mSm)
+        gbinder_servicemanager_unref(mSm);
 }
 
 void LedsBinder::configure() {
+    if (!mClient)
+        return;
+
     if (m_state == State::On)
         turnOn();
     else

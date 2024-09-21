@@ -71,7 +71,7 @@ private:
     void turnOff();
     bool initClient();
 
-    GBinderServiceManager* mSm;  
-    GBinderClient* mClient;
+    GBinderServiceManager* mSm = nullptr;
+    GBinderClient* mClient = nullptr;
 };
 }
