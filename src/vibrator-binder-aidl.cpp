@@ -109,5 +109,7 @@ void VibratorBinderAidl::configure(State state, int durationMs) {
         gbinder_remote_reply_init_reader(reply, &reader);
         status = gbinder_reader_read_uint32(&reader, &value);
     }
+
+    gbinder_remote_reply_unref(reply);
 }
 }
