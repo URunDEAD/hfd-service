@@ -113,6 +113,7 @@ LedsBinder::LedsBinder() : Leds() {
 
 LedsBinder::~LedsBinder()
 {
+    gbinder_client_unref(mClient);
     gbinder_servicemanager_unref(mSm);
 }
 

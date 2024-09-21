@@ -77,6 +77,7 @@ VibratorBinderHidl::VibratorBinderHidl(): Vibrator() {
 
 VibratorBinderHidl::~VibratorBinderHidl()
 {
+    gbinder_client_unref(mClient);
     gbinder_servicemanager_unref(mSm);
 
     if (m_thread) {
