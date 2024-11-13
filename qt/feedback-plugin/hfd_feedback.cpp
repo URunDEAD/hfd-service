@@ -133,11 +133,6 @@ void hfd::Feedback::vibrate(int period, int repeat)
         return;
     }
 
-
-    QDBusInterface iface("com.lomiri.hfd",
-                         "/com/lomiri/hfd",
-                         "com.lomiri.hfd.Vibrator");
-
     QDBusPendingCall call = m_interface->vibrate(period);
     QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(call, this);
     connect(watcher, &QDBusPendingCallWatcher::finished,
