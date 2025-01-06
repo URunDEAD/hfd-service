@@ -1,6 +1,40 @@
+2025-01-06 Mike Gabriel
+
+        * Release 0.2.3 (HEAD -> main, tag: 0.2.3)
+
+2024-11-13 Mike Gabriel
+
+        * Merge branch 'personal/peat-psuwit/remove-useless-iface' into
+          'main' (84d8e1f)
+
+2024-11-13 Ratchanan Srirattanamet
+
+        * qt/feedback-plugin: remove duplicated iface object declaration
+          (908f70d)
+
+2024-09-16 Ratchanan Srirattanamet
+
+        * Merge branch 'personal/muhammad/aidl-support' into 'main' (090d184)
+
+2024-09-09 Muhammad
+
+        * vibrator-binder: Add support for AIDL vibrator HAL (61652fe)
+
+2024-04-25 Mike Gabriel
+
+        * Merge branch 'personal/peat-psuwit/build-against-noble' into 'main'
+          (5d27a57)
+
+2024-04-24 Ratchanan Srirattanamet
+
+        * d/{control, rules}: adapt packaging to also be buildable on Debian
+          (c20d7e4)
+        * d/hfd-service.install: adapt to new Systemd unit install location
+          (03d6f66)
+
 2024-01-25 Mike Gabriel
 
-        * Release 0.2.2 (HEAD -> main, tag: 0.2.2)
+        * Release 0.2.2 (ea116aa) (tag: 0.2.2)
         * Merge branch 'personal/gberh/improve-metadata' into 'main'
           (b5451ce)
 
