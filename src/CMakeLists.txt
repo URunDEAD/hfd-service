@@ -39,6 +39,7 @@ endif()
 add_library(hfd-core STATIC
     leds.cpp
     leds-sysfs.cpp
+    leds-sysfs-single-color.cpp
 
     vibrator.cpp
     vibrator-ff.cpp

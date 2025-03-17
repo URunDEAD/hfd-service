@@ -18,6 +18,7 @@
 
 #include "leds.h"
 #include "leds-sysfs.h"
+#include "leds-sysfs-single-color.h"
 
 #ifdef HAVE_LIBHYBRIS
 #include "leds-hybris.h"
@@ -62,6 +63,10 @@ std::shared_ptr<Leds> Leds::create()
         std::cout << "Using sysfs leds" << std::endl;
         return std::make_shared<LedsSysfs>();
     }
+    else if (LedsSysfsSingleColor::usable()) {
+        std::cout << "Using sysfs single color led" << std::endl;
+        return std::make_shared<LedsSysfsSingleColor>();
+    }
 
     std::cout << "Using dummy leds" << std::endl;
     return std::make_shared<LedsDummy>();
@@ -72,6 +77,10 @@ std::shared_ptr<Leds> Leds::create(std::string type)
     if (type == "sysfs") {
         std::cout << "Using sysfs leds" << std::endl;
         return std::make_shared<LedsSysfs>();
+    }
+    else if (type == "sysfs-single-color") {
+        std::cout << "Using sysfs single color led" << std::endl;
+        return std::make_shared<LedsSysfsSingleColor>();
     }
 #ifdef HAVE_LIBHYBRIS
     else if (type == "hybris") {
