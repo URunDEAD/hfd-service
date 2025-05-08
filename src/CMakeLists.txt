@@ -54,6 +54,7 @@ target_link_libraries(hfd-core
     udev-cpp
     ${LIBHYBRIS_LIBRARIES}
     ${LIBGBINDER_LIBRARIES}
+    ${DEVICEINFO_LDFLAGS}
 )
 
 include_directories(

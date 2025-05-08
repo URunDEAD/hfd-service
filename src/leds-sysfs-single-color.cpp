@@ -19,6 +19,8 @@
 #include "leds-sysfs-single-color.h"
 #include "utils.h"
 
+#include <deviceinfo.h>
+
 #include <iostream>
 #include <regex>
 #include <unistd.h>
@@ -46,12 +48,14 @@ bool LedsSysfsSingleColor::usable() {
     if (access("/sys/class/leds", F_OK ) == -1)
         return false;
 
+    std::string configuredSysfs;
+    Udev::UdevDevice dev;
+    DeviceInfo devInfo;
     Udev::Udev udev;
-    Udev::UdevEnumerate enumerator = udev.enumerate_new();
-    enumerator.add_match_sysattr("subsystem","leds");
-    enumerator.scan_devices();
 
-    for (auto dev : enumerator.enumerate_devices()) {
+    configuredSysfs = devInfo.get("SingleColorLedSysfsPath", "");
+    if (!configuredSysfs.empty()) {
+        dev = udev.device_from_syspath(configuredSysfs);
         if (has_timer_trigger(dev)) {
             return true;
         }
@@ -61,25 +65,20 @@ bool LedsSysfsSingleColor::usable() {
 }
 
 LedsSysfsSingleColor::LedsSysfsSingleColor(): Leds() {
+    std::string configuredSysfs;
+    Udev::UdevDevice dev;
+    DeviceInfo devInfo;
     Udev::Udev udev;
 
-    Udev::UdevEnumerate enumerator = udev.enumerate_new();
-    enumerator.add_match_sysattr("subsystem","leds");
-    enumerator.scan_devices();
-
-    bool found_led = false;
-    for (auto dev : enumerator.enumerate_devices()) {
+    configuredSysfs = devInfo.get("SingleColorLedSysfsPath", "");
+    if (!configuredSysfs.empty()) {
+        dev = udev.device_from_syspath(configuredSysfs);
         if (has_timer_trigger(dev)) {
-            m_ledDevice = dev;
-            found_led = true;
             std::cout << "Using LED: " << dev.get_sysname() << std::endl;
-            break;
+            m_ledDevice = dev;
+            m_ledDevice.set_sysattr("trigger", "timer");
+            m_timer = true;
         }
-    }
-
-    if (found_led) {
-        m_ledDevice.set_sysattr("trigger", "timer");
-        m_timer = true;
     }
 
     // Get up to date
