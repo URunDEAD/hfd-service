@@ -19,6 +19,7 @@ pkg_check_modules(ACCOUNTSSERVICE REQUIRED accountsservice)
 pkg_get_variable(AS_INTERFACES_DIR accountsservice interfacesdir)
 
 option(ENABLE_LIBHYBRIS "Enable libhybris support" ON)
+option(ENFORCE_SYSTEMD_SERVICE "Enable installation of systemd services" OFF)
 
 if (ENABLE_LIBHYBRIS)
   pkg_check_modules(ANDROID_HEADERS android-headers)
