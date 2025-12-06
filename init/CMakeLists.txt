@@ -3,9 +3,13 @@
 ##
 
 pkg_check_modules(SYSTEMD systemd)
-if (${SYSTEMD_FOUND})
+if (SYSTEMD_FOUND OR ENFORCE_SYSTEMD_SERVICE)
 
-    pkg_get_variable(SYSTEMD_SYSTEM_DIR systemd systemdsystemunitdir)
+    if (ENFORCE_SYSTEMD_SERVICE)
+        set (SYSTEMD_SYSTEM_DIR "/usr/lib/systemd/system/")
+    elseif(${SYSTEMD_FOUND})
+        pkg_get_variable(SYSTEMD_SYSTEM_DIR systemd systemdsystemunitdir)
+    endif()
     message (STATUS "${SYSTEMD_SYSTEM_DIR} is the systemd system unit file install dir")
 
     set (SYSTEMD_SYSTEM_NAME "${CMAKE_PROJECT_NAME}.service")
