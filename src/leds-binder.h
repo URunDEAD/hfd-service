@@ -71,8 +71,7 @@ private:
     void turnOff();
     bool initClient();
 
-    GBinderServiceManager* mSm;  
-    GBinderRemoteObject* mRemote;
-    GBinderClient* mClient;
+    GBinderServiceManager* mSm = nullptr;
+    GBinderClient* mClient = nullptr;
 };
 }

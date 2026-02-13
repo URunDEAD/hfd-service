@@ -38,9 +38,8 @@ protected:
     void configure(State state, int durationMs) override;
 
 private:
-    GBinderServiceManager *mSm;
-    GBinderRemoteObject *mRemote;
-    GBinderClient *mClient;
+    GBinderServiceManager *mSm = nullptr;
+    GBinderClient *mClient = nullptr;
     std::shared_ptr<std::thread> m_thread;
 };
 }

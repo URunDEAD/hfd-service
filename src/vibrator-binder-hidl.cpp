@@ -33,46 +33,43 @@ namespace hfd {
 bool VibratorBinderHidl::usable() {
     GBinderServiceManager *sm;
     GBinderRemoteObject *remote;
-    GBinderClient *client;
 
     sm = gbinder_servicemanager_new(BINDER_HIDL_VIBRATOR_SERVICE_DEVICE);
     if (!sm)
         return false;
 
+    /* "autoreleased" i.e. unowned */
     remote = gbinder_servicemanager_get_service_sync(sm, BINDER_HIDL_VIBRATOR_SERVICE_FQNAME, NULL);
     if (!remote) {
         gbinder_servicemanager_unref(sm);
         return false;
     }
 
-    client = gbinder_client_new(remote, BINDER_HIDL_VIBRATOR_SERVICE_IFACE);
-    if (!client) {
-        gbinder_remote_object_unref(remote);
-        gbinder_servicemanager_unref(sm);
-        return false;
-    }
-    gbinder_remote_object_unref(remote);
     gbinder_servicemanager_unref(sm);
 
     return true;
 }
 
 VibratorBinderHidl::VibratorBinderHidl(): Vibrator() {
+    GBinderRemoteObject *remote;
+
     mSm = gbinder_servicemanager_new(BINDER_HIDL_VIBRATOR_SERVICE_DEVICE);
     if (!mSm)
         return;
 
-    mRemote = gbinder_servicemanager_get_service_sync(mSm, BINDER_HIDL_VIBRATOR_SERVICE_FQNAME, NULL);
+    /* "autoreleased" i.e. unowned */
+    remote = gbinder_servicemanager_get_service_sync(mSm, BINDER_HIDL_VIBRATOR_SERVICE_FQNAME, NULL);
 
-    if (!mRemote) {
+    if (!remote) {
         gbinder_servicemanager_unref(mSm);
+        mSm = nullptr;
         return;
     }
 
-    mClient = gbinder_client_new(mRemote, BINDER_HIDL_VIBRATOR_SERVICE_IFACE);
+    mClient = gbinder_client_new(remote, BINDER_HIDL_VIBRATOR_SERVICE_IFACE);
     if (!mClient) {
-        gbinder_remote_object_unref(mRemote);
         gbinder_servicemanager_unref(mSm);
+        mSm = nullptr;
         return;
     }
 
@@ -82,8 +79,10 @@ VibratorBinderHidl::VibratorBinderHidl(): Vibrator() {
 
 VibratorBinderHidl::~VibratorBinderHidl()
 {
-    gbinder_remote_object_unref(mRemote);
-    gbinder_servicemanager_unref(mSm);
+    if (mClient)
+        gbinder_client_unref(mClient);
+    if (mSm)
+        gbinder_servicemanager_unref(mSm);
 
     if (m_thread) {
         m_thread->join();
@@ -91,6 +90,9 @@ VibratorBinderHidl::~VibratorBinderHidl()
 }
 
 void VibratorBinderHidl::configure(State state, int durationMs) {
+    if (!mClient)
+        return;
+
     int status;
     GBinderRemoteReply *reply;
     GBinderLocalRequest *req = gbinder_client_new_request(mClient);
@@ -113,5 +115,7 @@ void VibratorBinderHidl::configure(State state, int durationMs) {
         gbinder_remote_reply_init_reader(reply, &reader);
         status = gbinder_reader_read_uint32(&reader, &value);
     }
+
+    gbinder_remote_reply_unref(reply);
 }
 }

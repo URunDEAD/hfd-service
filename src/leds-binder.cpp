@@ -39,6 +39,7 @@ bool LedsBinder::usable() {
     if (!sm)
         return false;
 
+    /* "autoreleased" i.e. unowned */
     remote = gbinder_servicemanager_get_service_sync(sm, BINDER_LIGHT_SERVICE_FQNAME, NULL);
     if (!remote) {
         gbinder_servicemanager_unref(sm);
@@ -46,7 +47,6 @@ bool LedsBinder::usable() {
     }
     client = gbinder_client_new(remote, BINDER_LIGHT_SERVICE_IFACE);
     if (!client) {
-        gbinder_remote_object_unref(remote);
         gbinder_servicemanager_unref(sm);
         return false;
     }
@@ -63,7 +63,8 @@ bool LedsBinder::usable() {
         gbinder_remote_reply_init_reader(reply, &reader);
         status = gbinder_reader_read_uint32(&reader, &value);
         if (value != GBINDER_STATUS_OK) {
-            gbinder_remote_object_unref(remote);
+            gbinder_remote_reply_unref(reply);
+            gbinder_client_unref(client);
             gbinder_servicemanager_unref(sm);
             return false;
         }
@@ -74,31 +75,37 @@ bool LedsBinder::usable() {
         types = (const int32_t*) gbinder_reader_read_hidl_vec(&reader, &count, &vecSize);
         for (int i = 0; i < count; i++) {
             if (types[i] == LIGHT_TYPE_NOTIFICATIONS) {
-                gbinder_remote_object_unref(remote);
+                gbinder_remote_reply_unref(reply);
+                gbinder_client_unref(client);
                 gbinder_servicemanager_unref(sm);
                 return true;
             }
         }
     }
-    gbinder_remote_object_unref(remote);
+    gbinder_remote_reply_unref(reply);
+    gbinder_client_unref(client);
     gbinder_servicemanager_unref(sm);
     return false;
 }
 
 LedsBinder::LedsBinder() : Leds() {
+    GBinderRemoteObject *remote;
+
     mSm = gbinder_servicemanager_new(BINDER_LIGHT_SERVICE_DEVICE);
     if (!mSm)
         return;
 
-    mRemote = gbinder_servicemanager_get_service_sync(mSm, BINDER_LIGHT_SERVICE_FQNAME, NULL);
-    if (!mRemote) {
+    /* "autoreleased" i.e. unowned */
+    remote = gbinder_servicemanager_get_service_sync(mSm, BINDER_LIGHT_SERVICE_FQNAME, NULL);
+    if (!remote) {
         gbinder_servicemanager_unref(mSm);
+        mSm = nullptr;
         return;
     }
-    mClient = gbinder_client_new(mRemote, BINDER_LIGHT_SERVICE_IFACE);
+    mClient = gbinder_client_new(remote, BINDER_LIGHT_SERVICE_IFACE);
     if (!mClient) {
-        gbinder_remote_object_unref(mRemote);
         gbinder_servicemanager_unref(mSm);
+        mSm = nullptr;
         return;
     }
 
@@ -108,11 +115,16 @@ LedsBinder::LedsBinder() : Leds() {
 
 LedsBinder::~LedsBinder()
 {
-    gbinder_remote_object_unref(mRemote);
-    gbinder_servicemanager_unref(mSm);
+    if (mClient)
+        gbinder_client_unref(mClient);
+    if (mSm)
+        gbinder_servicemanager_unref(mSm);
 }
 
 void LedsBinder::configure() {
+    if (!mClient)
+        return;
+
     if (m_state == State::On)
         turnOn();
     else
@@ -156,6 +168,8 @@ void LedsBinder::turnOn()
         gbinder_remote_reply_init_reader(reply, &reader);
         status = gbinder_reader_read_uint32(&reader, &value);
     }
+
+    gbinder_remote_reply_unref(reply);
 }
 
 void LedsBinder::turnOff()
@@ -189,5 +203,7 @@ void LedsBinder::turnOff()
         gbinder_remote_reply_init_reader(reply, &reader);
         status = gbinder_reader_read_uint32(&reader, &value);
     }
+
+    gbinder_remote_reply_unref(reply);
 }
 }
