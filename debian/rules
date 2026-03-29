@@ -1,5 +1,11 @@
 #!/usr/bin/make -f
 
+export DEB_BUILD_MAINT_OPTIONS = hardening=+all
+DPKG_EXPORT_BUILDFLAGS = 1
+include /usr/share/dpkg/buildflags.mk
+
+export systemdsystemunitdir = $(shell pkg-config --variable=systemdsystemunitdir systemd)
+
 %:
 	dh $@ --buildsystem cmake
 
@@ -15,3 +21,6 @@ override_dh_auto_configure:
 
 override_dh_missing:
 	dh_missing --fail-missing
+
+get-orig-source:
+	uscan --noconf --force-download --rename --download-current-version --destdir=..
