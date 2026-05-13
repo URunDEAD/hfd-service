@@ -67,7 +67,7 @@ namespace Udev
        */
 		UdevEnumerate enumerate_new();
 	private:
-		UdevHandle *handle;
+		UdevHandle *handle = nullptr;
 	};
 
 	/**
@@ -88,7 +88,7 @@ namespace Udev
 
 		UdevDevice receive_device() const;
 	private:
-		UdevMonitorHandle *handle;
+		UdevMonitorHandle *handle = nullptr;
 	};
 
 	/**
@@ -121,7 +121,7 @@ namespace Udev
 
 		std::vector<UdevDevice> enumerate_devices() const;
 	private:
-		UdevEnumerateHandle *handle;
+		UdevEnumerateHandle *handle = nullptr;
 	};
 
 	/**
@@ -178,7 +178,7 @@ namespace Udev
 		std::vector<std::string> get_tags() const;
 
 	private:
-		UdevDeviceHandle *handle;
+		UdevDeviceHandle *handle = nullptr;
 	};
 
 }

@@ -21,14 +21,29 @@ namespace Udev
 
 	UdevMonitor& UdevMonitor::operator=(const UdevMonitor& other)
 	{
-		handle = udev_monitor_ref(other.handle);
+		if (this != &other)
+		{
+			auto *new_handle = other.handle ? udev_monitor_ref(other.handle) : nullptr;
+			if (handle)
+			{
+				udev_monitor_unref(handle);
+			}
+			handle = new_handle;
+		}
 		return *this;
 	}
 
 	UdevMonitor& UdevMonitor::operator=(UdevMonitor&& other)
 	{
-		handle = other.handle;
-		other.handle = nullptr;
+		if (this != &other)
+		{
+			if (handle)
+			{
+				udev_monitor_unref(handle);
+			}
+			handle = other.handle;
+			other.handle = nullptr;
+		}
 		return *this;
 	}
 

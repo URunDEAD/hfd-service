@@ -20,14 +20,29 @@ namespace Udev
 
 	UdevEnumerate &UdevEnumerate::operator=(const UdevEnumerate &other)
 	{
-		udev_enumerate_ref(other.handle);
+		if (this != &other)
+		{
+			auto *new_handle = other.handle ? udev_enumerate_ref(other.handle) : nullptr;
+			if (handle)
+			{
+				udev_enumerate_unref(handle);
+			}
+			handle = new_handle;
+		}
 		return *this;
 	}
 
 	UdevEnumerate &UdevEnumerate::operator=(UdevEnumerate &&other)
 	{
-		handle = other.handle;
-		other.handle = nullptr;
+		if (this != &other)
+		{
+			if (handle)
+			{
+				udev_enumerate_unref(handle);
+			}
+			handle = other.handle;
+			other.handle = nullptr;
+		}
 		return *this;
 	}
 
