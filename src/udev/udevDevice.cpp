@@ -22,14 +22,29 @@ namespace Udev
 
 	UdevDevice& UdevDevice::operator=(const UdevDevice &other)
 	{
-		handle = udev_device_ref(other.handle);
+		if (this != &other)
+		{
+			auto *new_handle = other.handle ? udev_device_ref(other.handle) : nullptr;
+			if (handle)
+			{
+				udev_device_unref(handle);
+			}
+			handle = new_handle;
+		}
 		return *this;
 	}
 
 	UdevDevice& UdevDevice::operator=(UdevDevice &&other)
 	{
-		handle = udev_device_ref(other.handle);
-		other.handle = nullptr;
+		if (this != &other)
+		{
+			if (handle)
+			{
+				udev_device_unref(handle);
+			}
+			handle = other.handle;
+			other.handle = nullptr;
+		}
 		return *this;
 	}
 
