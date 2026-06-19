@@ -1,6 +1,81 @@
+2026-06-19 Mike Gabriel
+
+        * Release 0.2.4 (HEAD -> main, tag: 0.2.4)
+
+2026-05-21 Ratchanan Srirattanamet
+
+        * Merge branch 'personal/notkit/udev-handles-nullptr' into 'main'
+          (dece49c)
+
+2026-05-13 TheKit
+
+        * udev-cpp: fix uninitialized pointer dereference in wrappers
+          (6442452)
+
+2026-03-30 Mike Gabriel
+
+        * Merge branch 'personal/alteholz/sync-with-debian-hfd-service' into
+          'main' (8d3d3c0)
+
+2026-03-29 Thorsten Alteholz
+
+        * debian/: Sync packaging from salsa.debian.org. (7e1ab6d)
+
+2026-02-13 Jami Kettunen
+
+        * Merge branch
+          'personal/peat-psuwit/vibrator-binder-usable-no-client'
+          into 'main' (46f2f2b)
+
+2024-09-22 Ratchanan Srirattanamet
+
+        * {Leds,Vibrator}Binder*: handle client or servicemanager fails to
+          create (c10960c)
+        * {Leds,Vibrator}Binder*: unref stored client at the destructor
+          (8553415)
+        * {Leds,Vibrator}Binder*: unref GBinderRemoteReply everywhere
+          (56f8470)
+
+2024-09-21 Ratchanan Srirattanamet
+
+        * LedsBinder: free Client in the ::usable() function (c36bb99)
+        *Binder*: don't unref RemoteObject returned from ServiceManager
+          (8a7a87d)
+
+2024-09-13 Ratchanan Srirattanamet
+
+        * VibratorBinder{Hidl,Aidl}: don't create GBinderClient in usable()
+          (a31954f)
+
+2025-12-06 Mike Gabriel
+
+        * Merge branch 'systemd-service-option' into 'main' (0b7ad97)
+
+2025-11-20 Achill Gilgenast
+
+        * init: Add option to install systemd services without systemd
+          installed (8651d89)
+
+2025-05-08 Mike Gabriel
+
+        * Merge branch 'fix-leds-sysfs-single-color' into 'main' (6b6aab5)
+
+2025-05-08 Jami Kettunen
+
+        * leds: only enable single color sysfs backend via deviceinfo
+          (fd0ec40)
+
+2025-03-20 Ratchanan Srirattanamet
+
+        * Merge branch 'main' into 'main' (197741f)
+
+2025-03-17 Bardia Moshiri
+
+        * leds: implement single color sysfs backend (228c369)
+
 2025-01-06 Mike Gabriel
 
-        * Release 0.2.3 (HEAD -> main, tag: 0.2.3)
+        * Release 0.2.3 (98028b7) (tag: 0.2.3)
 
 2024-11-13 Mike Gabriel
 
