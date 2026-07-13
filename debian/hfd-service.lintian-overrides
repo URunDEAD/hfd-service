@@ -1,0 +1,2 @@
+# reported upstream: https://gitlab.com/ubports/development/core/hfd-service/-/issues/1
+hfd-service: no-manual-page [usr/libexec/hfd-service]

@@ -1,13 +1,11 @@
 #!/usr/bin/make -f
 
 export DEB_BUILD_MAINT_OPTIONS = hardening=+all
-DPKG_EXPORT_BUILDFLAGS = 1
-include /usr/share/dpkg/buildflags.mk
 
 export systemdsystemunitdir = $(shell pkg-config --variable=systemdsystemunitdir systemd)
 
 %:
-	dh $@ --buildsystem cmake
+	dh $@
 
 # FIXME: This should say `--derives-from UBports`, but we haven't got time to
 # make a dpkg vendor entry yet.
@@ -18,9 +16,6 @@ DISTRO_CMAKE_FLAGS = $(shell \
 
 override_dh_auto_configure:
 	dh_auto_configure -- $(DISTRO_CMAKE_FLAGS)
-
-override_dh_missing:
-	dh_missing --fail-missing
 
 get-orig-source:
 	uscan --noconf --force-download --rename --download-current-version --destdir=..
