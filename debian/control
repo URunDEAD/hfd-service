@@ -1,36 +1,38 @@
 Source: hfd-service
+Standards-Version: 4.7.4
+Maintainer: Debian UBports Team <team+ubports@tracker.debian.org>
+Uploaders:
+ Mike Gabriel <sunweaver@debian.org>,
+ Marius Gripsgard <marius@debian.org>,
 Section: admin
-Priority: optional
-Build-Depends: cmake,
-               debhelper-compat (= 13),
-               dh-exec,
-               pkg-config,
-               libandroid-properties-dev | hello,
-               libdeviceinfo-dev,
-               libhardware-dev | hello,
-               android-headers | hello,
-               libglib2.0-dev,
-               libgbinder-dev | hello,
-               libglibutil-dev | hello,
-               libudev-dev,
-               qtbase5-dev,
-               qtfeedback5-dev,
-               cmake-extras,
-               qtdeclarative5-dev,
-               systemd-dev [linux-any],
-               accountsservice:native,
-               libaccountsservice-dev,
-               libdbus-1-dev,
-Maintainer: Marius Gripsgard <marius@ubports.com>
-Standards-Version: 4.6.2
+Build-Depends:
+ debhelper-compat (= 13),
+ dh-exec,
+ accountsservice:native,
+ android-headers,
+ cmake,
+ cmake-extras,
+ libaccountsservice-dev,
+ libandroid-properties-dev | hello,
+ libdbus-1-dev,
+ libdeviceinfo-dev,
+ libgbinder-dev | hello,
+ libhardware-dev | hello,
+ libudev-dev,
+ pkgconf,
+ qtbase5-dev,
+ qtdeclarative5-dev,
+ qtfeedback5-dev,
+ systemd-dev [linux-any],
+Vcs-Browser: Vcs-Git: https://gitlab.com/ubports/development/core/hfd-service
+Vcs-Git: Vcs-Git: https://gitlab.com/ubports/development/core/hfd-service.git
 Homepage: https://gitlab.com/ubports/development/core/hfd-service
-Vcs-Git: https://gitlab.com/ubports/development/core/hfd-service.git
-Vcs-Browser: https://gitlab.com/ubports/development/core/hfd-service
 
 Package: hfd-service
 Architecture: any
-Depends: ${misc:Depends},
-         ${shlibs:Depends},
+Depends:
+ ${misc:Depends},
+ ${shlibs:Depends},
 Description: system D-Bus service for accessing human feedback devices
  Human feedback device service is a D-Bus activated service that manages
  human feedback devices such as LEDs and vibrators on mobile devices.
@@ -38,11 +40,12 @@ Description: system D-Bus service for accessing human feedback devices
  The package contains the HFD system service.
 
 Package: libqt5feedback5-hfd
-Section: libs
 Architecture: any
-Depends: ${misc:Depends},
-         ${shlibs:Depends},
-         hfd-service,
+Section: libs
+Depends:
+ hfd-service,
+ ${misc:Depends},
+ ${shlibs:Depends},
 Description: Qt feedback library extension for accessing the HFD service
  Human feedback device service is a Dbus activated service that manages
  human feedback devices such as LEDs and vibrators on mobile devices.
@@ -51,11 +54,12 @@ Description: Qt feedback library extension for accessing the HFD service
  the HFD service.
 
 Package: qml-module-hfd
-Section: libs
 Architecture: any
-Depends: ${misc:Depends},
-         ${shlibs:Depends},
-         hfd-service,
+Section: libs
+Depends:
+ hfd-service,
+ ${misc:Depends},
+ ${shlibs:Depends},
 Description: QML bindings for HFD Service
  Human feedback device service is a Dbus activated service that manages
  human feedback devices such as LEDs and vibrators on mobile devices.
@@ -64,9 +68,10 @@ Description: QML bindings for HFD Service
 
 Package: hfd-service-tools
 Architecture: any
-Depends: ${misc:Depends},
-         ${shlibs:Depends},
-         hfd-service,
+Depends:
+ hfd-service,
+ ${misc:Depends},
+ ${shlibs:Depends},
 Description: Tools to detect and configure devices
  Human feedback device service is a Dbus activated service that manages
  human feedback devices such as LEDs and vibrators on mobile devices.

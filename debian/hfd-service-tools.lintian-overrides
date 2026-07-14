@@ -1,0 +1,3 @@
+# reported upstream: https://gitlab.com/ubports/development/core/hfd-service/-/issues/1
+hfd-service-tools: no-manual-page [usr/bin/hfd-service-tools-leds]
+hfd-service-tools: no-manual-page [usr/bin/hfd-service-tools-vibrator]

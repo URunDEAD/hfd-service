@@ -1,7 +1,6 @@
 Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
-Upstream-Name: hfd-service
-Upstream-Contact: Marius Gripsgard <marius@ubports.com>
 Source: https://gitlab.com/ubports/development/core/hfd-service
+Upstream-Name: hfd-service
 
 Files: *
 Copyright: 2019 UBports foundation, Marius Gripsgard <marius@ubports.com>

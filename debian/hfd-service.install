@@ -1,6 +1,8 @@
-usr/libexec/hfd-service
-usr/lib/systemd/system/hfd-service.service
+#! /usr/bin/dh-exec
+
+[linux-any] ${env:systemdsystemunitdir}/hfd-service.service
 etc/dbus-1/system.d/com.lomiri.hfd.conf
-usr/share/dbus-1/system-services/com.lomiri.hfd.service
-usr/share/dbus-1/interfaces/com.lomiri.hfd.AccountsService.Settings.xml
+usr/libexec/hfd-service
 usr/share/accountsservice/interfaces/com.lomiri.hfd.AccountsService.Settings.xml
+usr/share/dbus-1/interfaces/com.lomiri.hfd.AccountsService.Settings.xml
+usr/share/dbus-1/system-services/com.lomiri.hfd.service
