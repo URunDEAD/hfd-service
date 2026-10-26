@@ -19,6 +19,7 @@
 #include "vibrator-ff.h"
 #include "utils.h"
 
+#include <cstdlib>
 #include <fstream>
 #include <string>
 #include <iostream>
@@ -128,7 +129,18 @@ VibratorFF::VibratorFF(): Vibrator() {
 	// Create a rumble effect
 	effect.type = FF_RUMBLE;
 	effect.id = -1;
-	effect.u.rumble.strong_magnitude = 0x6000; // This should be adjustable
+	// HFD_FF_MAGNITUDE (1..0xffff, any strtoul base) overrides the default
+	// strength; invalid or missing values keep 0x6000.
+	effect.u.rumble.strong_magnitude = 0x6000;
+	if (const char *mag_env = std::getenv("HFD_FF_MAGNITUDE")) {
+		char *end = nullptr;
+		unsigned long mag = std::strtoul(mag_env, &end, 0);
+		if (end != mag_env && *end == '\0' && mag >= 1 && mag <= 0xffff) {
+			effect.u.rumble.strong_magnitude = static_cast<__u16>(mag);
+		} else {
+			std::cerr << "Ignoring invalid HFD_FF_MAGNITUDE: " << mag_env << std::endl;
+		}
+	}
 	effect.u.rumble.weak_magnitude = 0;
 
 	fd = open(devname.c_str(), O_RDWR|O_CLOEXEC);
